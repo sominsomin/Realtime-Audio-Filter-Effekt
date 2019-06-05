@@ -1,0 +1,39 @@
+// peaking Equalizer-Equation
+float peakingEq(float x0_, float fc_, float q_, float Gdb_)
+{
+  //Input = x; Output = y;
+
+  //was ist mit Q? wird nicht verwendet -> Formel checken
+  float x0 = x0_; //current audio sample
+  float fc = fc_; //center frequency
+  float q = q_; // Q-value
+  float Gdb = Gdb_; // ~~ gain in dezibel
+  //float mu = in4;
+
+  float y2; //second last output audio sample
+  float y1; //last output audio sample
+  float x2; //second last input sample
+  float x1; //last input sample
+
+  float fs = 44100; //Sampling Rate
+
+  float wc = 2*PI*fc/fs;
+  float mu = 10^(Gdb/20);
+  float kq = 4/(1+mu)*tan(wc/(2*Q));
+
+  float Cpk = (1 + kq*mu)/(1+kq);
+  float b1 = (-2*cos(wc))/(1+kq*mu);
+  float b2 = (1-kq*mu)/(1+kq*mu);
+  float a1 = (-2*cos(wc))/(1+kq);
+  float a2 = (1-kq)/(1+kq);
+
+  //difference equation
+  float y0 = Cpk*x0 + b1*x1 + b2*x2 - a1*y1 - a2*y2;
+
+  y2 = y1;
+  y1 = y0;
+  x2 = x1;
+  x1 = x0;
+
+  return y0;
+}
