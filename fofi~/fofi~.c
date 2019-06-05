@@ -15,6 +15,7 @@
  * include the interface to Pd
  */
 #include "m_pd.h"
+#include <math.h>
 
 
 /**
@@ -65,6 +66,12 @@ typedef struct _fofi_tilde {
  */
 t_int *fofi_tilde_perform(t_int *w)
 {
+
+	static t_sample last_out1[2]; // last two samples for output 1
+	static t_sample last_out2[2]; // last two samples for output 2
+	static t_sample last_in1[2];  // last two samples for input 1
+	static t_sample last_in2[2];  // last two samples for input 2
+
 	/* the first element is a pointer to the dataspace of this object */
 	t_fofi_tilde *x = (t_fofi_tilde *)(w[1]);
 
@@ -76,11 +83,36 @@ t_int *fofi_tilde_perform(t_int *w)
 	t_sample  *out1 =    (t_sample *)(w[4]);
 	t_sample  *out2 =    (t_sample *)(w[5]);
 
+	float fs = 48000; //Sampling Rate TODO: get actual sample rate
+	float wc = 2 * M_PI * (x->f_centerFrequency / fs);
+	float mu = pow(10, (float)  (x->f_gain));
+	float kq = 4 / (1 + mu) * tan( wc / (2 * x->f_peakWidth));
 
-	for (	int n = 0; n < (int)(w[6]) ; n++ ) {
-		out1[n] = in2[n] * x->f_centerFrequency;
-		out2[n] = in1[n] * x->f_gain;
+	float Cpk = (1 + kq*mu)/(1+kq);
+	float b1 = (-2*cos(wc))/(1+kq*mu);
+	float b2 = (1-kq*mu)/(1+kq*mu);
+	float a1 = (-2*cos(wc))/(1+kq);
+	float a2 = (1-kq)/(1+kq);
+
+
+	for (	int i = 0; i < (int)(w[6]) ; i++ ) {
+		out1[i] = (Cpk * in1[i]) + (b1 * last_in1[0]) + (b2 * last_in1[1]) - a1*last_out1[0] - a2*last_out1[1];
+		out2[i] = (Cpk * in2[i]) + (b1 * last_in2[0]) + (b2 * last_in2[1]) - a1*last_out2[0] - a2*last_out2[1];
 	}
+
+	// TODO: figure out what the signal vectors are
+	last_out1[1] = last_out1[0];
+	last_out1[0] = out1[0];
+
+	last_out2[1] = last_out2[0];
+	last_out2[0] = out2[0];
+
+	last_in1[1] = last_in1[0];
+	last_in1[0] = in1[0];
+
+	last_in2[1] = last_in2[0];
+	last_in2[0] = in2[0];
+
 
 	/* return a pointer to the dataspace for the next dsp-object */
 	return (w+7);
