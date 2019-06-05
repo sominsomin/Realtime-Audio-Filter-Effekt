@@ -1,0 +1,18 @@
+#N canvas 1122 215 1317 615 10;
+#X obj 273 0 vsl 15 64 1 10 0 0 empty empty empty 0 -9 0 10 -262144
+-1 -1 6800 1;
+#X obj 331 1 vsl 15 64 50 20000 0 0 empty empty empty 0 -9 0 10 -262144
+-1 -1 7700 1;
+#X obj 198 228 dac~;
+#X obj 421 10 vsl 15 64 1 10 0 0 empty empty empty 0 -9 0 10 -262144
+-1 -1 9100 1;
+#X obj 169 13 phasor~ 200;
+#X obj 92 67 phasor~ 440;
+#X obj 231 107 fofi~;
+#X connect 0 0 6 2;
+#X connect 1 0 6 3;
+#X connect 3 0 6 4;
+#X connect 4 0 6 1;
+#X connect 5 0 6 0;
+#X connect 6 0 2 0;
+#X connect 6 1 2 1;
