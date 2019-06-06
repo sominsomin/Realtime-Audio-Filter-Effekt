@@ -680,7 +680,7 @@ pdincludepathwithspaces := $(if $(word 2, $(PDINCLUDEDIR)), $(PDINCLUDEDIR))
 # warnings. CFLAGS can be safely overriden using a make command argument.
 # Variables cflags, ldflags and ldlibs may be defined in including makefile.
 
-optimization.flags = -O3 -ffast-math -funroll-loops -fomit-frame-pointer
+optimization.flags = -O0 -ffast-math -funroll-loops -fomit-frame-pointer
 warn.flags = -Wall -Wextra -Wshadow -Winline -Wstrict-aliasing
 
 # suppress -Wunused-variable & Co if you don't want to clutter a build log
@@ -803,9 +803,9 @@ MAKEFLAGS += --no-builtin-rules
 .PRECIOUS:
 .SUFFIXES:
 .PHONY: all post build-lib \
-        $(classes) $(makefiledirs) $(makefiles) \
-        install install-executables install-datafiles install-datadirs \
-        force clean vars allvars depend help
+	$(classes) $(makefiledirs) $(makefiles) \
+	install install-executables install-datafiles install-datadirs \
+	force clean vars allvars depend help
 
 
 ################################################################################
@@ -850,8 +850,8 @@ endef
 %.$(extension): $(shared.lib)
 	$(info ++++ info: linking objects in $@ for lib $(lib.name))
 	$(if $(filter %.cc %.cpp, $($*.class.sources)), \
-        $(call link-class,cxx,$*), \
-        $(call link-class,c,$*))
+	$(call link-class,cxx,$*), \
+	$(call link-class,c,$*))
 
 
 #=== library blob ==============================================================
@@ -875,8 +875,8 @@ endef
 ifeq ($(make-lib-executable),yes)
 $(lib.name).$(extension): $(all.objects)
 	$(if $(filter %.cc %.cpp, $(all.sources)), \
-        $(call link-lib,cxx), \
-        $(call link-lib,c))
+	$(call link-lib,cxx), \
+	$(call link-lib,c))
 endif
 
 
@@ -897,8 +897,8 @@ endef
 lib$(lib.name).$(shared.extension): $(shared.objects)
 	$(info ++++ info: linking objects in shared lib $@)
 	$(if $(filter %.cc %.cpp, $(shared.sources)), \
-        $(call link-shared,cxx), \
-        $(call link-shared,c))
+	$(call link-shared,cxx), \
+	$(call link-shared,c))
 
 
 #=== object files ==============================================================
@@ -1105,7 +1105,7 @@ install-executables: all
 	$(foreach v, $(executables), \
 	$(INSTALL_PROGRAM) '$v' "$(installpath)";)
 	$(info ++++ info: executables of lib $(lib.name) installed \
-        from $(CURDIR) to $(installpath))
+	from $(CURDIR) to $(installpath))
 	$(if $(stripflags), $(strip-executables),)
 
 install-datafiles: all
@@ -1113,14 +1113,14 @@ install-datafiles: all
 	$(foreach v, $(datafiles), \
 	$(INSTALL_DATA) '$(v)' "$(installpath)";)
 	$(info ++++ info: data files of lib $(lib.name) installed \
-        from $(CURDIR) to $(installpath))
+	from $(CURDIR) to $(installpath))
 
 install-datadirs: all
 	$(foreach v, $(datadirs), $(INSTALL_DIR) "$(installpath)/$v";)
 	$(foreach v, $(datadirs), \
-        $(INSTALL_DATA) $(wildcard $v/*) "$(installpath)/$v";)
+	$(INSTALL_DATA) $(wildcard $v/*) "$(installpath)/$v";)
 	$(info ++++ info: data directories of lib $(lib.name) installed \
-        from $(CURDIR) to $(installpath))
+	from $(CURDIR) to $(installpath))
 
 
 ################################################################################
@@ -1179,7 +1179,7 @@ endif
 # These targets will trigger sub-make processes for entries in 'makefiledirs'
 # and 'makefiles'.
 all alldebug install clean distclean dist dkpg-source: \
-        $(makefiledirs) $(makefiles)
+	$(makefiledirs) $(makefiles)
 
 # this expands to identical rules for each entry in 'makefiledirs'
 $(makefiledirs):
@@ -1218,9 +1218,9 @@ make-assembly-file
 vars:
 	$(info ++++ info: showing makefile variables:)
 	$(foreach v,\
-        $(sort $(filter-out $(functions) functions, $(.VARIABLES))),\
-        $(if $(filter file, $(origin $v)),\
-        $(info variable $v = $($v))))
+	$(sort $(filter-out $(functions) functions, $(.VARIABLES))),\
+	$(if $(filter file, $(origin $v)),\
+	$(info variable $v = $($v))))
 	$(foreach v, $(functions), $(info 'function' name: $v))
 	@echo
 
@@ -1228,8 +1228,8 @@ vars:
 allvars:
 	$(info ++++ info: showing default, automatic and makefile variables:)
 	$(foreach v, \
-        $(sort $(filter-out $(functions) functions, $(.VARIABLES))), \
-        $(info variable ($(origin $v)) $v = $($v)))
+	$(sort $(filter-out $(functions) functions, $(.VARIABLES))), \
+	$(info variable ($(origin $v)) $v = $($v)))
 	$(foreach v, $(functions), $(info 'function' name: $v))
 	@echo
 
@@ -1294,4 +1294,3 @@ coffee:
 
 # for syntax highlighting in vim and github
 # vim: set filetype=make:
-
