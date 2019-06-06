@@ -67,10 +67,11 @@ typedef struct _fofi_tilde {
 t_int *fofi_tilde_perform(t_int *w)
 {
 
-	static t_sample last_out1[2]; // last two samples for output 1
-	static t_sample last_out2[2]; // last two samples for output 2
-	static t_sample last_in1[2];  // last two samples for input 1
-	static t_sample last_in2[2];  // last two samples for input 2
+	static t_sample last_out1[2] = {0, 0}; // last two samples for output 1
+	static t_sample last_out2[2] = {0, 0}; // last two samples for output 2
+	static t_sample last_in1[2] = {0, 0};  // last two samples for input 1
+	static t_sample last_in2[2] = {0, 0};  // last two samples for input 2
+
 
 	/* the first element is a pointer to the dataspace of this object */
 	t_fofi_tilde *x = (t_fofi_tilde *)(w[1]);
@@ -83,6 +84,10 @@ t_int *fofi_tilde_perform(t_int *w)
 	t_sample  *out1 =    (t_sample *)(w[4]);
 	t_sample  *out2 =    (t_sample *)(w[5]);
 
+	int num_samples = (int)(w[6]);
+
+	// TODO: Give these variables proper names OR add comments to clarify what these are!
+
 	float fs = 48000; //Sampling Rate TODO: get actual sample rate
 	float wc = 2 * M_PI * (x->f_centerFrequency / fs);
 	float mu = pow(10, (float)  (x->f_gain));
@@ -94,24 +99,40 @@ t_int *fofi_tilde_perform(t_int *w)
 	float a1 = (-2*cos(wc))/(1+kq);
 	float a2 = (1-kq)/(1+kq);
 
+	// If num_samples is to small do  nothing for now
+	// (Should "never" happen but might so we need to take it into consideration)
+	// TODO: Implement behaviour for num_samples < 2
+	if (num_samples < 2)
+		return (w+7);
 
-	for (	int i = 0; i < (int)(w[6]) ; i++ ) {
-		out1[i] = (Cpk * in1[i]) + (b1 * last_in1[0]) + (b2 * last_in1[1]) - a1*last_out1[0] - a2*last_out1[1];
-		out2[i] = (Cpk * in2[i]) + (b1 * last_in2[0]) + (b2 * last_in2[1]) - a1*last_out2[0] - a2*last_out2[1];
+	/*
+	 * Set the first samples manually based on the last samples we stored
+	 */
+	out1[0] = (Cpk * in1[0]) + (b1 * last_in1[0]) + (b2 * last_in1[1]) - a1*last_out1[0] - a2*last_out1[1];
+	out2[0] = (Cpk * in2[0]) + (b1 * last_in2[0]) + (b2 * last_in2[1]) - a1*last_out2[0] - a2*last_out2[1];
+
+	out1[1] = (Cpk * in1[1]) + (b1 * last_in1[1]) + (b2 * in1[0]) - a1*last_out1[1] - a2*out1[0];
+	out2[1] = (Cpk * in2[1]) + (b1 * last_in2[1]) + (b2 * in2[0]) - a1*last_out2[1] - a2*out2[0];
+
+	// Set remaining samples
+	for (	int i = 2; i < num_samples ; i++ ) {
+		out1[i] = (Cpk * in1[i]) + (b1 * in1[i-1]) + (b2 * in1[i-2]) - a1*out1[i-1] - a2*out1[i-2];
+		out2[i] = (Cpk * in2[i]) + (b1 * in2[i-1]) + (b2 * in2[i-2]) - a1*out2[i-1] - a2*out2[i-2];
 	}
 
-	// TODO: figure out what the signal vectors are
-	last_out1[1] = last_out1[0];
-	last_out1[0] = out1[0];
+	// update last_out/in
 
-	last_out2[1] = last_out2[0];
-	last_out2[0] = out2[0];
+	last_out1[1] = out1[num_samples-2];
+	last_out1[0] = out1[num_samples-1];
 
-	last_in1[1] = last_in1[0];
-	last_in1[0] = in1[0];
+	last_out2[1] = out2[num_samples-2];
+	last_out2[0] = out2[num_samples-1];
 
-	last_in2[1] = last_in2[0];
-	last_in2[0] = in2[0];
+	last_in1[1] = in1[num_samples-2];
+	last_in1[0] = in1[num_samples-1];
+
+	last_in2[1] = in2[num_samples-2];
+	last_in2[0] = in2[num_samples-1];
 
 
 	/* return a pointer to the dataspace for the next dsp-object */
