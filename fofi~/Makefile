@@ -16,4 +16,4 @@ PDLIBBUILDER_DIR=../pd-lib-builder/
 include $(PDLIBBUILDER_DIR)/Makefile.pdlibbuilder
 
 debug_run: clean alldebug
-	gdb -ex "symbol-file fofi~.pd_linux" --args pd -nrt -stderr -open ./fofi_test.pd
+	gdb -ex "add-symbol-file fofi~.pd_linux" --args pd -nrt -stderr -open ./fofi_test.pd
