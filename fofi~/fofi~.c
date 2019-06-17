@@ -45,8 +45,8 @@ typedef struct _fofi_tilde {
 
 	t_outlet*x_out1;
 	t_outlet*x_out2;
-}
-	t_fofi_tilde;
+
+}	t_fofi_tilde;
 
 
 /**
@@ -66,7 +66,6 @@ typedef struct _fofi_tilde {
  */
 t_int *fofi_tilde_perform(t_int *w)
 {
-
 	static t_sample last_out1[2] = {0, 0}; // last two samples for output 1
 	static t_sample last_out2[2] = {0, 0}; // last two samples for output 2
 	static t_sample last_in1[2] = {0, 0};  // last two samples for input 1
@@ -77,6 +76,9 @@ t_int *fofi_tilde_perform(t_int *w)
 	t_fofi_tilde *x = (t_fofi_tilde *)(w[1]);
 
 	/* here is a pointer to the t_sample arrays that hold the 2 input signals */
+	/* NOTE: Apparently inlets and outlets can share the same addresses which leads to issues if
+		 the input is not stored in an extra variable https://forum.pdpatchrepo.info/topic/10293/multiple-signal-outlets-in-external/8
+	*/
 	t_sample  *in1 =    (t_sample *)(w[2]);
 	t_sample  *in2 =    (t_sample *)(w[3]);
 
@@ -99,40 +101,40 @@ t_int *fofi_tilde_perform(t_int *w)
 	float a1 = (-2*cos(wc))/(1+kq);
 	float a2 = (1-kq)/(1+kq);
 
-	// If num_samples is to small do  nothing for now
-	// (Should "never" happen but might so we need to take it into consideration)
-	// TODO: Implement behaviour for num_samples < 2
-	if (num_samples < 2)
-		return (w+7);
+	// Set  samples
+	for (	int i = 0; i < num_samples ; i++ ) {
+		out1[i] = (Cpk * in1[i]) + (b1 * last_in1[0]) + (b2 * last_in1[1]) - a1*last_out1[0] - a2*last_out1[1];
+		out2[i] = (Cpk * in2[i]) + (b1 * last_in2[0]) + (b2 * last_in2[1]) - a1*last_out2[0] - a2*last_out2[1];
 
-	/*
-	 * Set the first samples manually based on the last samples we stored
-	 */
-	out1[0] = (Cpk * in1[0]) + (b1 * last_in1[0]) + (b2 * last_in1[1]) - a1*last_out1[0] - a2*last_out1[1];
-	out2[0] = (Cpk * in2[0]) + (b1 * last_in2[0]) + (b2 * last_in2[1]) - a1*last_out2[0] - a2*last_out2[1];
+		if (i <= 0 ) {
+			// update last_out/in
+			last_out1[1] = last_out1[0];
+			last_out1[0] = out1[i];
 
-	out1[1] = (Cpk * in1[1]) + (b1 * last_in1[1]) + (b2 * in1[0]) - a1*last_out1[1] - a2*out1[0];
-	out2[1] = (Cpk * in2[1]) + (b1 * last_in2[1]) + (b2 * in2[0]) - a1*last_out2[1] - a2*out2[0];
+			last_out2[1] = last_out2[0];
+			last_out2[0] = out2[i];
 
-	// Set remaining samples
-	for (	int i = 2; i < num_samples ; i++ ) {
-		out1[i] = (Cpk * in1[i]) + (b1 * in1[i-1]) + (b2 * in1[i-2]) - a1*out1[i-1] - a2*out1[i-2];
-		out2[i] = (Cpk * in2[i]) + (b1 * in2[i-1]) + (b2 * in2[i-2]) - a1*out2[i-1] - a2*out2[i-2];
+			last_in1[1] = last_in1[0];
+			last_in1[0] = in1[i];
+
+			last_in2[1] = last_in2[0];
+			last_in2[0] = in2[i];
+		}else{
+
+			// update last_out/in
+			last_out1[1] = out1[i-1];
+			last_out1[0] = out1[i];
+
+			last_out2[1] = out2[i-1];
+			last_out2[0] = out2[i-0];
+
+			last_in1[1] = in1[i-1];
+			last_in1[0] = in1[i];
+
+			last_in2[1] = in2[i-1];
+			last_in2[0] = in2[i];}
 	}
 
-	// update last_out/in
-
-	last_out1[1] = out1[num_samples-2];
-	last_out1[0] = out1[num_samples-1];
-
-	last_out2[1] = out2[num_samples-2];
-	last_out2[0] = out2[num_samples-1];
-
-	last_in1[1] = in1[num_samples-2];
-	last_in1[0] = in1[num_samples-1];
-
-	last_in2[1] = in2[num_samples-2];
-	last_in2[0] = in2[num_samples-1];
 
 
 	/* return a pointer to the dataspace for the next dsp-object */
@@ -198,17 +200,17 @@ void *fofi_tilde_new(t_floatarg f)
  */
 void fofi_tilde_setup(void) {
 	fofi_tilde_class = class_new(gensym("fofi~"),
-				(t_newmethod)fofi_tilde_new,
-				(t_method)fofi_tilde_free,
-	sizeof(t_fofi_tilde),
-				CLASS_DEFAULT,
-				A_DEFFLOAT, 0);
+															 (t_newmethod)fofi_tilde_new,
+															 (t_method)fofi_tilde_free,
+															 sizeof(t_fofi_tilde),
+															 CLASS_DEFAULT,
+															 A_DEFFLOAT, 0);
 
 	/* whenever the audio-engine is turned on, the "fofi_tilde_dsp()"
 	 * function will get called
 	 */
 	class_addmethod(fofi_tilde_class,
-				(t_method)fofi_tilde_dsp, gensym("dsp"), 0);
+									(t_method)fofi_tilde_dsp, gensym("dsp"), A_CANT, 0);
 
 	/* if no signal is connected to the first inlet, we can as well
 	 * connect a number box to it and use it as "signal"
