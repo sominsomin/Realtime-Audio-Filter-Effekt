@@ -16,7 +16,7 @@
  */
 #include "m_pd.h"
 #include <math.h>
-
+#include <string.h>
 
 /**
  * define a new "class"
@@ -71,16 +71,21 @@ t_int *fofi_tilde_perform(t_int *w)
 	static t_sample last_in1[2] = {0, 0};  // last two samples for input 1
 	static t_sample last_in2[2] = {0, 0};  // last two samples for input 2
 
+	/* NOTE: Apparently inlets and outlets can share the same addresses which leads to issues if
+		 the input is not stored in an extra variable https://forum.pdpatchrepo.info/topic/10293/multiple-signal-outlets-in-external/8
+	*/
+	/* static int NUM_SAMPLES = 64; // use fixed size for now */
+	/* t_sample  in1[64], in2[64]; */
+
+	/* memcpy(&in1, (t_sample *)(w[2]), NUM_SAMPLES*sizeof(t_sample)); */
+	/* memcpy(&in2, (t_sample *)(w[3]), NUM_SAMPLES*sizeof(t_sample)); */
+	t_sample  *in1 =    (t_sample *)(w[2]);
+	t_sample  *in2 =    (t_sample *)(w[3]);
+
 
 	/* the first element is a pointer to the dataspace of this object */
 	t_fofi_tilde *x = (t_fofi_tilde *)(w[1]);
 
-	/* here is a pointer to the t_sample arrays that hold the 2 input signals */
-	/* NOTE: Apparently inlets and outlets can share the same addresses which leads to issues if
-		 the input is not stored in an extra variable https://forum.pdpatchrepo.info/topic/10293/multiple-signal-outlets-in-external/8
-	*/
-	t_sample  *in1 =    (t_sample *)(w[2]);
-	t_sample  *in2 =    (t_sample *)(w[3]);
 
 	/* here comes the signalblock that will hold the output signal */
 	t_sample  *out1 =    (t_sample *)(w[4]);
@@ -90,7 +95,7 @@ t_int *fofi_tilde_perform(t_int *w)
 
 	// TODO: Give these variables proper names OR add comments to clarify what these are!
 
-	float fs = 48000; //Sampling Rate TODO: get actual sample rate
+	float fs = 96000; //Sampling Rate TODO: get actual sample rate
 	float wc = 2 * M_PI * (x->f_centerFrequency / fs);
 	float mu = pow(10, (float)  (x->f_gain));
 	float kq = 4 / (1 + mu) * tan( wc / (2 * x->f_peakWidth));
@@ -103,36 +108,23 @@ t_int *fofi_tilde_perform(t_int *w)
 
 	// Set  samples
 	for (	int i = 0; i < num_samples ; i++ ) {
+		/* out1[i] = in2[i] * x->f_gain; */
+		/* out2[i] = in1[i] * x->f_gain; */
 		out1[i] = (Cpk * in1[i]) + (b1 * last_in1[0]) + (b2 * last_in1[1]) - a1*last_out1[0] - a2*last_out1[1];
 		out2[i] = (Cpk * in2[i]) + (b1 * last_in2[0]) + (b2 * last_in2[1]) - a1*last_out2[0] - a2*last_out2[1];
 
-		if (i <= 0 ) {
-			// update last_out/in
-			last_out1[1] = last_out1[0];
-			last_out1[0] = out1[i];
+		// update last_out/in
+		last_out1[1] = last_out1[0];
+		last_out1[0] = out1[i];
 
-			last_out2[1] = last_out2[0];
-			last_out2[0] = out2[i];
+		last_out2[1] = last_out2[0];
+		last_out2[0] = out2[i];
 
-			last_in1[1] = last_in1[0];
-			last_in1[0] = in1[i];
+		last_in1[1] = last_in1[0];
+		last_in1[0] = in1[i];
 
-			last_in2[1] = last_in2[0];
-			last_in2[0] = in2[i];
-		}else{
-
-			// update last_out/in
-			last_out1[1] = out1[i-1];
-			last_out1[0] = out1[i];
-
-			last_out2[1] = out2[i-1];
-			last_out2[0] = out2[i-0];
-
-			last_in1[1] = in1[i-1];
-			last_in1[0] = in1[i];
-
-			last_in2[1] = in2[i-1];
-			last_in2[0] = in2[i];}
+		last_in2[1] = last_in2[0];
+		last_in2[0] = in2[i];
 	}
 
 
