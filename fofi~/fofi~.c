@@ -1,6 +1,6 @@
 /*
  * HOWTO write an External for Pure data
- * (c) 2001-2006 IOhannes m zmölnig zmoelnig[AT]iem.at
+ * (c) 2001-2006 IOhannes m zmï¿½lnig zmoelnig[AT]iem.at
  *
  * this is the source-code for the fourth example in the HOWTO
  * it creates a simple dsp-object:
@@ -49,6 +49,32 @@ typedef struct _fofi_tilde {
 }	t_fofi_tilde;
 
 
+// check pointers and stuff, how that shit works
+
+float peakingEqualizer(t_sample in, t_sample *last_in , t_sample *last_out, float f_centerFrequency,
+											float f_gain, float f_peakWidth)
+{
+	// TODO: User proper variable names
+	float fs = 41000; //Sampling Rate TODO: get actual sample rate
+	float wc = 2 * M_PI * (f_centerFrequency / fs);
+	float mu = pow(10, (float)  (f_gain));
+	float kq =4 / (1 + mu) * tan( wc / (2 * f_peakWidth));
+	float Cpk = (1 + kq*mu)/(1+kq);
+	float b1 = (-2*cos(wc))/(1+kq*mu);
+	float b2 = (1-kq*mu)/(1+kq*mu);
+	float a1 = (-2*cos(wc))/(1+kq);
+	float a2 = (1-kq)/(1+kq);
+
+	float out = (Cpk * in) + (b1 * last_in[0]) + (b2 * last_in[1]) - ( a1 * last_out[0] ) - ( a2 * last_out[1] );
+	// update last_out/in
+	last_out[1] = last_out[0];
+	last_out[0] = out;
+	last_in[1] = last_in[0];
+	last_in[0] = in;
+	return out;
+
+}
+
 /**
  * this is the core of the object
  * this perform-routine is called for each signal block
@@ -71,21 +97,11 @@ t_int *fofi_tilde_perform(t_int *w)
 	static t_sample last_in1[2] = {0, 0};  // last two samples for input 1
 	static t_sample last_in2[2] = {0, 0};  // last two samples for input 2
 
-	/* NOTE: Apparently inlets and outlets can share the same addresses which leads to issues if
-		 the input is not stored in an extra variable https://forum.pdpatchrepo.info/topic/10293/multiple-signal-outlets-in-external/8
-	*/
-	/* static int NUM_SAMPLES = 64; // use fixed size for now */
-	/* t_sample  in1[64], in2[64]; */
-
-	/* memcpy(&in1, (t_sample *)(w[2]), NUM_SAMPLES*sizeof(t_sample)); */
-	/* memcpy(&in2, (t_sample *)(w[3]), NUM_SAMPLES*sizeof(t_sample)); */
 	t_sample  *in1 =    (t_sample *)(w[2]);
 	t_sample  *in2 =    (t_sample *)(w[3]);
 
-
 	/* the first element is a pointer to the dataspace of this object */
 	t_fofi_tilde *x = (t_fofi_tilde *)(w[1]);
-
 
 	/* here comes the signalblock that will hold the output signal */
 	t_sample  *out1 =    (t_sample *)(w[4]);
@@ -93,41 +109,14 @@ t_int *fofi_tilde_perform(t_int *w)
 
 	int num_samples = (int)(w[6]);
 
-	// TODO: Give these variables proper names OR add comments to clarify what these are!
-
-	float fs = 96000; //Sampling Rate TODO: get actual sample rate
-	float wc = 2 * M_PI * (x->f_centerFrequency / fs);
-	float mu = pow(10, (float)  (x->f_gain));
-	float kq = 4 / (1 + mu) * tan( wc / (2 * x->f_peakWidth));
-
-	float Cpk = (1 + kq*mu)/(1+kq);
-	float b1 = (-2*cos(wc))/(1+kq*mu);
-	float b2 = (1-kq*mu)/(1+kq*mu);
-	float a1 = (-2*cos(wc))/(1+kq);
-	float a2 = (1-kq)/(1+kq);
-
-	// Set  samples
 	for (	int i = 0; i < num_samples ; i++ ) {
-		/* out1[i] = in2[i] * x->f_gain; */
-		/* out2[i] = in1[i] * x->f_gain; */
-		out1[i] = (Cpk * in1[i]) + (b1 * last_in1[0]) + (b2 * last_in1[1]) - a1*last_out1[0] - a2*last_out1[1];
-		out2[i] = (Cpk * in2[i]) + (b1 * last_in2[0]) + (b2 * last_in2[1]) - a1*last_out2[0] - a2*last_out2[1];
+		out1[i] = peakingEqualizer(in1[i], last_in1, last_out1, x->f_centerFrequency, x->f_gain, x->f_peakWidth );
+		out2[i] = peakingEqualizer(in2[i], last_in2, last_out2, x->f_centerFrequency, x->f_gain, x->f_peakWidth );
 
-		// update last_out/in
-		last_out1[1] = last_out1[0];
-		last_out1[0] = out1[i];
-
-		last_out2[1] = last_out2[0];
-		last_out2[0] = out2[i];
-
-		last_in1[1] = last_in1[0];
-		last_in1[0] = in1[i];
-
-		last_in2[1] = last_in2[0];
-		last_in2[0] = in2[i];
+		// Make sure we don't send unreasonable values
+		out1[i] = out1[i] < -1 || out1[i] > 1 ? 0 : out1[i];
+		out2[i] = out2[i] < -1 || out2[i] > 1 ? 0 : out2[i];
 	}
-
-
 
 	/* return a pointer to the dataspace for the next dsp-object */
 	return (w+7);
