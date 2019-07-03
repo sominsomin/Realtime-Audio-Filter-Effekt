@@ -33,25 +33,18 @@ typedef struct _fofi_tilde {
 	t_object  x_obj;
 
 	t_sample f_centerFrequency;
-	t_sample f_centerFrequency_2;
-	t_sample f_centerFrequency_3;
-	t_sample f_centerFrequency_4;
 	t_sample f_peakWidth;
 	t_sample f_gain;
 
 	t_sample f;
 
-
 	t_inlet *x_in2;
 	t_inlet *x_in3;
-	t_inlet *x_in4;
+	t_inlet *x_in4; 
 	t_inlet *x_in5;
-	t_inlet *x_in6;
-	t_inlet *x_in7;
-	t_inlet *x_in8;
 
-	t_outlet *x_out1;
-	t_outlet *x_out2;
+	t_outlet*x_out1;
+	t_outlet*x_out2;
 
 }	t_fofi_tilde;
 
@@ -175,11 +168,9 @@ t_int *fofi_tilde_perform(t_int *w)
 		In1[i] = in1[i];
 		In2[i] = in2[i];
 
-		//out1[i] = peakingEqualizer(&In1[i], &last_in1, &last_out1, x->f_centerFrequency, x->f_gain, x->f_peakWidth );
-		//out2[i] = peakingEqualizer(&In2[i], &last_in2, &last_out2, x->f_centerFrequency, x->f_gain, x->f_peakWidth );
+		out1[i] = peakingEqualizer(&In1[i], &last_in1, &last_out1, x->f_centerFrequency, x->f_gain, x->f_peakWidth );
+		out2[i] = peakingEqualizer(&In2[i], &last_in2, &last_out2, x->f_centerFrequency, x->f_gain, x->f_peakWidth );
 
-		out1[i] = In1[i];
-		out2[i] = In2[i];
 		// // save input value here
 		// // sometimes they seem to be overwritten with the output
 		// In1[i] = in1[i];
@@ -216,8 +207,8 @@ t_int *fofi_tilde_perform(t_int *w)
  */
 void fofi_tilde_dsp(t_fofi_tilde *x, t_signal **sp)
 {
-	dsp_add(fofi_tilde_perform, 9, x,
-					sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec, sp[3]->s_vec, sp[4]->s_vec, sp[5]->s_vec, sp[6]->s_vec, sp[0]->s_n);
+	dsp_add(fofi_tilde_perform, 6, x,
+					sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec, sp[3]->s_vec, sp[0]->s_n);
 }
 
 /**
@@ -231,9 +222,6 @@ void fofi_tilde_free(t_fofi_tilde *x)
 	inlet_free(x->x_in3);
 	inlet_free(x->x_in4);
 	inlet_free(x->x_in5);
-	inlet_free(x->x_in6);
-	inlet_free(x->x_in7);
-	inlet_free(x->x_in8);
 
 	/* free any ressources associated with the given outlet */
 	outlet_free(x->x_out1);
@@ -252,12 +240,9 @@ void *fofi_tilde_new(t_floatarg f)
 	x->x_in2 = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
 
 	/* create a new passive inlet for the gain */
-	x->x_in3 = floatinlet_new (&x->x_obj, &x->f_centerFrequency);
-	x->x_in4 = floatinlet_new (&x->x_obj, &x->f_centerFrequency_2);
-	x->x_in5 = floatinlet_new (&x->x_obj, &x->f_centerFrequency_3);
-	x->x_in6 = floatinlet_new (&x->x_obj, &x->f_centerFrequency_4);
-	x->x_in7 = floatinlet_new (&x->x_obj, &x->f_gain);
-	x->x_in8 = floatinlet_new (&x->x_obj, &x->f_peakWidth);
+	x->x_in3 = floatinlet_new (&x->x_obj, &x->f_gain);
+	x->x_in4 = floatinlet_new (&x->x_obj, &x->f_centerFrequency);
+	x->x_in5 = floatinlet_new (&x->x_obj, &x->f_peakWidth);
 
 	/* create a new signal-outlet */
 	x->x_out1 = outlet_new(&x->x_obj, &s_signal);

@@ -6,7 +6,7 @@
 lib.name = externals.howto.example4
 
 # input source file (class name == source file basename)
-class.sources = fofi~.c
+class.sources = fofiLongNameLongName~.c
 
 # all extra files to be included in binary distribution of the library
 datafiles =
@@ -16,4 +16,4 @@ PDLIBBUILDER_DIR=../pd-lib-builder/
 include $(PDLIBBUILDER_DIR)/Makefile.pdlibbuilder
 
 debug_run: clean alldebug
-	gdb -ex "add-symbol-file fofi~.pd_linux" --args pd -nrt -stderr -open ./fofi_test.pd
+	gdb -ex "add-symbol-file fofiLongNameLongName~.pd_linux" --args pd -nrt -stderr -open ./fofi_test.pd

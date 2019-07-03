@@ -21,7 +21,7 @@
 /**
  * define a new "class"
  */
-static t_class *fofi_tilde_class;
+static t_class *fofiLongNameLongName_tilde_class;
 
 
 /**
@@ -29,7 +29,7 @@ static t_class *fofi_tilde_class;
  * the first element is the mandatory "t_object"
  * "f" is a dummy and is used to be able to send floats AS signals.
  */
-typedef struct _fofi_tilde {
+typedef struct _fofiLongNameLongName_tilde {
 	t_object  x_obj;
 
 	t_sample f_centerFrequency;
@@ -53,7 +53,7 @@ typedef struct _fofi_tilde {
 	t_outlet *x_out1;
 	t_outlet *x_out2;
 
-}	t_fofi_tilde;
+}	t_fofiLongNameLongName_tilde;
 
 
 // check pointers and stuff, how that shit works
@@ -102,18 +102,18 @@ float peakingEqualizer( t_sample (*in), t_sample (*last_in)[2] , t_sample (*last
  * this is the core of the object
  * this perform-routine is called for each signal block
  * the name of this function is arbitrary and is registered to Pd in the
- * fofi_tilde_dsp() function, each time the DSP is turned on
+ * fofiLongNameLongName_tilde_dsp() function, each time the DSP is turned on
  *
  * the argument to this function is just a pointer within an array
  * we have to know for ourselves how many elements inthis array are
  * reserved for us (hint: we declare the number of used elements in the
- * fofi_tilde_dsp() at registration
+ * fofiLongNameLongName_tilde_dsp() at registration
  *
  * since all elements are of type "t_int" we have to cast them to whatever
  * we think is apropriate; "apropriate" is how we registered this function
- * in fofi_tilde_dsp()
+ * in fofiLongNameLongName_tilde_dsp()
  */
-t_int *fofi_tilde_perform(t_int *w)
+t_int *fofiLongNameLongName_tilde_perform(t_int *w)
 {
 	static t_sample last_out1[2] = {0, 0}; // last two samples for output 1
 	static t_sample last_out2[2] = {0, 0}; // last two samples for output 2
@@ -136,7 +136,7 @@ t_int *fofi_tilde_perform(t_int *w)
 	t_sample  *In2 = (t_sample *)(w[3]);
 
 	/* the first element is a pointer to the dataspace of this object */
-	t_fofi_tilde *x = (t_fofi_tilde *)(w[1]);
+	t_fofiLongNameLongName_tilde *x = (t_fofiLongNameLongName_tilde *)(w[1]);
 
 
 	/* here comes the signalblock that will hold the output signal */
@@ -175,11 +175,9 @@ t_int *fofi_tilde_perform(t_int *w)
 		In1[i] = in1[i];
 		In2[i] = in2[i];
 
-		//out1[i] = peakingEqualizer(&In1[i], &last_in1, &last_out1, x->f_centerFrequency, x->f_gain, x->f_peakWidth );
-		//out2[i] = peakingEqualizer(&In2[i], &last_in2, &last_out2, x->f_centerFrequency, x->f_gain, x->f_peakWidth );
+		out1[i] = peakingEqualizer(&In1[i], &last_in1, &last_out1, x->f_centerFrequency, x->f_gain, x->f_peakWidth );
+		out2[i] = peakingEqualizer(&In2[i], &last_in2, &last_out2, x->f_centerFrequency, x->f_gain, x->f_peakWidth );
 
-		out1[i] = In1[i];
-		out2[i] = In2[i];
 		// // save input value here
 		// // sometimes they seem to be overwritten with the output
 		// In1[i] = in1[i];
@@ -212,11 +210,11 @@ t_int *fofi_tilde_perform(t_int *w)
 /**
  * register a special perform-routine at the dsp-engine
  * this function gets called whenever the DSP is turned ON
- * the name of this function is registered in fofi_tilde_setup()
+ * the name of this function is registered in fofiLongNameLongName_tilde_setup()
  */
-void fofi_tilde_dsp(t_fofi_tilde *x, t_signal **sp)
+void fofiLongNameLongName_tilde_dsp(t_fofiLongNameLongName_tilde *x, t_signal **sp)
 {
-	dsp_add(fofi_tilde_perform, 9, x,
+	dsp_add(fofiLongNameLongName_tilde_perform, 9, x,
 					sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec, sp[3]->s_vec, sp[4]->s_vec, sp[5]->s_vec, sp[6]->s_vec, sp[0]->s_n);
 }
 
@@ -224,7 +222,7 @@ void fofi_tilde_dsp(t_fofi_tilde *x, t_signal **sp)
  * this is the "destructor" of the class;
  * it allows us to free dynamically allocated ressources
  */
-void fofi_tilde_free(t_fofi_tilde *x)
+void fofiLongNameLongName_tilde_free(t_fofiLongNameLongName_tilde *x)
 {
 	/* free any ressources associated with the given inlet */
 	inlet_free(x->x_in2);
@@ -244,9 +242,9 @@ void fofi_tilde_free(t_fofi_tilde *x)
  * this is the "constructor" of the class
  * the argument is the initial mixing-factor
  */
-void *fofi_tilde_new(t_floatarg f)
+void *fofiLongNameLongName_tilde_new(t_floatarg f)
 {
-	t_fofi_tilde *x = (t_fofi_tilde *)pd_new(fofi_tilde_class);
+	t_fofiLongNameLongName_tilde *x = (t_fofiLongNameLongName_tilde *)pd_new(fofiLongNameLongName_tilde_class);
 
 	/* create a new signal-inlet */
 	x->x_in2 = inlet_new(&x->x_obj, &x->x_obj.ob_pd, &s_signal, &s_signal);
@@ -271,22 +269,22 @@ void *fofi_tilde_new(t_floatarg f)
  * define the function-space of the class
  * within a single-object external the name of this function is very special
  */
-void fofi_tilde_setup(void) {
-	fofi_tilde_class = class_new(gensym("fofi~"),
-															 (t_newmethod)fofi_tilde_new,
-															 (t_method)fofi_tilde_free,
-															 sizeof(t_fofi_tilde),
+void fofiLongNameLongName_tilde_setup(void) {
+	fofiLongNameLongName_tilde_class = class_new(gensym("fofiLongNameLongName~"),
+															 (t_newmethod)fofiLongNameLongName_tilde_new,
+															 (t_method)fofiLongNameLongName_tilde_free,
+															 sizeof(t_fofiLongNameLongName_tilde),
 															 CLASS_DEFAULT,
 															 A_DEFFLOAT, 0);
 
-	/* whenever the audio-engine is turned on, the "fofi_tilde_dsp()"
+	/* whenever the audio-engine is turned on, the "fofiLongNameLongName_tilde_dsp()"
 	 * function will get called
 	 */
-	class_addmethod(fofi_tilde_class,
-									(t_method)fofi_tilde_dsp, gensym("dsp"), A_CANT, 0);
+	class_addmethod(fofiLongNameLongName_tilde_class,
+									(t_method)fofiLongNameLongName_tilde_dsp, gensym("dsp"), A_CANT, 0);
 
 	/* if no signal is connected to the first inlet, we can as well
 	 * connect a number box to it and use it as "signal"
 	 */
-	CLASS_MAINSIGNALIN(fofi_tilde_class, t_fofi_tilde, f);
+	CLASS_MAINSIGNALIN(fofiLongNameLongName_tilde_class, t_fofiLongNameLongName_tilde, f);
 }

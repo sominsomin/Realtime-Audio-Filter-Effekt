@@ -39,9 +39,6 @@ typedef struct _fofi_tilde {
 	t_sample f_peakWidth;
 	t_sample f_gain;
 
-	t_sample f;
-
-
 	t_inlet *x_in2;
 	t_inlet *x_in3;
 	t_inlet *x_in4;
@@ -50,8 +47,8 @@ typedef struct _fofi_tilde {
 	t_inlet *x_in7;
 	t_inlet *x_in8;
 
-	t_outlet *x_out1;
-	t_outlet *x_out2;
+	t_outlet*x_out1;
+	t_outlet*x_out2;
 
 }	t_fofi_tilde;
 
@@ -175,11 +172,9 @@ t_int *fofi_tilde_perform(t_int *w)
 		In1[i] = in1[i];
 		In2[i] = in2[i];
 
-		//out1[i] = peakingEqualizer(&In1[i], &last_in1, &last_out1, x->f_centerFrequency, x->f_gain, x->f_peakWidth );
-		//out2[i] = peakingEqualizer(&In2[i], &last_in2, &last_out2, x->f_centerFrequency, x->f_gain, x->f_peakWidth );
+		out1[i] = peakingEqualizer(&In1[i], &last_in1, &last_out1, x->f_centerFrequency, x->f_gain, x->f_peakWidth );
+		out2[i] = peakingEqualizer(&In2[i], &last_in2, &last_out2, x->f_centerFrequency, x->f_gain, x->f_peakWidth );
 
-		out1[i] = In1[i];
-		out2[i] = In2[i];
 		// // save input value here
 		// // sometimes they seem to be overwritten with the output
 		// In1[i] = in1[i];
