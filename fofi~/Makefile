@@ -3,7 +3,7 @@
 # settings and rules.
 
 # library name
-lib.name = externals.howto.example4
+lib.name = externals.fofi
 
 # input source file (class name == source file basename)
 class.sources = fofi~.c
@@ -17,3 +17,6 @@ include $(PDLIBBUILDER_DIR)/Makefile.pdlibbuilder
 
 debug_run: clean alldebug
 	gdb -ex "add-symbol-file fofi~.pd_linux" --args pd -nrt -stderr -open ./fofi_test.pd
+
+run: all
+	pd -open ./fofi_test.pd
