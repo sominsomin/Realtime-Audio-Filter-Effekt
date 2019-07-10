@@ -1,0 +1,9 @@
+#N canvas 759 117 1280 997 10;
+#X obj 180 27 notein;
+#X msg 135 83 note \$1;
+#X obj 136 131 polyphonizer;
+#X obj 51 161 print list;
+#X connect 0 0 1 0;
+#X connect 0 1 2 1;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
