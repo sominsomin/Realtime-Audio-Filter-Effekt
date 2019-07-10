@@ -1,31 +1,37 @@
-#N canvas 724 161 1118 844 10;
+#N canvas 1442 236 1118 844 10;
 #X obj 128 282 dac~;
-#X obj 76 166 phasor~ 200;
-#X obj 16 208 phasor~ 440;
 #X obj 126 248 fofi~;
-#X floatatom 186 147 10 1 10 1 Gain - -, f 10;
-#X obj 187 126 hsl 64 20 0 10 0 0 empty empty empty -2 -8 0 10 -262144
--1 -1 4900 1;
-#X floatatom 186 188 10 50 20000 1 Center_Frequency - -, f 10;
-#X obj 187 168 hsl 64 20 50 20000 0 0 empty empty empty -2 -8 0 10
--262144 -1 -1 4500 1;
-#X floatatom 185 231 10 1 10 1 PeakWidth - -, f 10;
-#X obj 186 210 hsl 64 20 0 10 0 0 empty empty empty -2 -8 0 10 -262144
--1 -1 3600 1;
+#X floatatom 296 111 10 1 10 1 Gain - -, f 10;
+#X obj 299 78 hsl 64 20 0 10 0 0 empty empty empty -2 -8 0 10 -262144
+-1 -1 12700 1;
+#X floatatom 295 195 10 1 10 1 PeakWidth - -, f 10;
+#X obj 296 174 hsl 64 20 0 20 0 0 empty empty empty -2 -8 0 10 -262144
+-1 -1 0 1;
 #X obj 212 266 bng 20 250 50 0 empty empty empty 17 7 0 10 -262144
 -1 -1;
 #X floatatom 209 316 5 0 0 0 - - -, f 5;
 #X obj 209 299 snapshot~;
-#X connect 1 0 3 1;
-#X connect 2 0 3 0;
-#X connect 3 0 0 0;
-#X connect 3 0 12 0;
-#X connect 3 1 0 1;
-#X connect 4 0 3 2;
+#X obj 21 168 polyphonizer;
+#X obj 47 79 notein;
+#X msg 21 143 note \$1;
+#X obj 160 137 readsf~;
+#X msg 95 102 start;
+#X msg 137 99 open loop.wav;
+#X obj 123 189 *~ 0.2;
+#X connect 1 0 0 0;
+#X connect 1 0 8 0;
+#X connect 1 0 0 1;
+#X connect 2 0 1 1;
+#X connect 3 0 2 0;
+#X connect 4 0 1 2;
 #X connect 5 0 4 0;
-#X connect 6 0 3 3;
-#X connect 7 0 6 0;
-#X connect 8 0 3 4;
-#X connect 9 0 8 0;
-#X connect 10 0 12 0;
-#X connect 12 0 11 0;
+#X connect 6 0 8 0;
+#X connect 8 0 7 0;
+#X connect 9 0 1 0;
+#X connect 10 0 11 0;
+#X connect 10 1 9 1;
+#X connect 11 0 9 0;
+#X connect 12 0 15 0;
+#X connect 13 0 12 0;
+#X connect 14 0 12 0;
+#X connect 15 0 1 0;
