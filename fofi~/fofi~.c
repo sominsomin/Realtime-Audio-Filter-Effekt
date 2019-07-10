@@ -1,9 +1,7 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
-
 #include "m_pd.h"
-
 
 static t_class *fofi_tilde_class;
 
@@ -14,10 +12,8 @@ typedef struct pe_last_values {
 	t_sample last_in[2];
 } t_pe_last_values;
 
-float peakingEqualizer(t_sample in, t_sample *last_in , t_sample *last_out, float f_centerFrequency,
-											float f_gain, float f_peakWidth)
-{
-	f_peakWidth = f_peakWidth <= 0 ? 0.1 : f_peakWidth ;
+float peaking_equalizer(t_sample in, t_sample *last_in , t_sample *last_out, float f_centerFrequency,
+											 float f_gain, float f_peakWidth){
 	// TODO: User proper variable names
 	float fs = 48000; //Sampling Rate TODO: get actual sample rate
 	float wc = 2 * M_PI * (f_centerFrequency / fs);
@@ -30,11 +26,7 @@ float peakingEqualizer(t_sample in, t_sample *last_in , t_sample *last_out, floa
 	float a2 = (1-kq)/(1+kq);
 
 	float out = (Cpk * in) + (b1 * last_in[0]) + (b2 * last_in[1]) - ( a1 * last_out[0] ) - ( a2 * last_out[1] );
-	// Make sure we don't send unreasonable values
-	out = out < -1 ? -1 : out;
-	out = out > 1 ? 1 : out;
 
-	// update last_out/in
 	last_out[1] = last_out[0];
 	last_out[0] = out;
 	last_in[1] = last_in[0];
@@ -44,8 +36,9 @@ float peakingEqualizer(t_sample in, t_sample *last_in , t_sample *last_out, floa
 }
 
 float bandpass(t_sample in, t_sample *last_in , t_sample *last_out, float f_centerFrequency,
-											float f_gain)
-{
+							 float f_gain){
+
+	// TODO: User proper variable names
 	float fs = 48000.0; //Sampling Rate TODO: get actual sample rate
 	float x = in;
 
@@ -62,13 +55,11 @@ float bandpass(t_sample in, t_sample *last_in , t_sample *last_out, float f_cent
 
 	float out = b0/a0 * x + b1/a0 * last_in[0] + b2/a0 * last_in[1] - a1/a0 * last_out[0] - a2/a0 * last_out[1];
 
-	// update last_out/in
 	last_out[1] = last_out[0];
 	last_out[0] = out;
 	last_in[1] = last_in[0];
 	last_in[0] = in;
 	return out;
-
 }
 
 typedef struct _fofi_tilde {
@@ -90,32 +81,29 @@ typedef struct _fofi_tilde {
 }	t_fofi_tilde;
 
 
-t_int *fofi_tilde_perform(t_int *w)
-{
-	t_sample  *in =    (t_sample *)(w[2]);
-
+t_int *fofi_tilde_perform(t_int *w) {
 	/* the first element is a pointer to the dataspace of this object */
 	t_fofi_tilde *x = (t_fofi_tilde *)(w[1]);
 
-	/* here comes the signalblock that will hold the output signal */
+	t_sample  *in =    (t_sample *)(w[2]);
 	t_sample  *out =    (t_sample *)(w[3]);
 
 	int num_samples = (int)(w[4]);
 
-	/* static t_pe_last_values lv = {{0,0}, {0,0}}; */
-
+	/* Make sure we don't break everything with 0 values*/
 	x->f_gain = x->f_gain == 0 ? 0.001 : x->f_gain;
-
+	x->f_peakWidth = x->f_peakWidth == 0 ? 0.001 : x->f_peakWidth ;
 
 	for (int n = 0; n < NUM_MIDINOTES ; n++){
 		if (atom_getfloat(&x->notes[n]) <= 0)
 			continue;
 
+		// TODO: Use a lookup table for freq/midi mapping
 		float freq = 440.0*pow(2,(((float) n)-69)/12);
 
-		for (	int i = 0; i < num_samples ; i++ ) {
-			out[i] = bandpass(in[i], x->last_values[n].last_in, x->last_values[n].last_out, freq, x->f_gain );
-
+		for (	int i = 0; i < num_samples ; i++ ){
+			out[i] = peaking_equalizer(in[i], x->last_values[n].last_in, x->last_values[n].last_out, freq, x->f_gain, x->f_peakWidth );
+			/* out[i] = bandpass(in[i], x->last_values[n].last_in, x->last_values[n].last_out, freq, x->f_gain ); */
 		}
 	}
 
@@ -124,35 +112,25 @@ t_int *fofi_tilde_perform(t_int *w)
 }
 
 
-void fofi_tilde_list(t_fofi_tilde *x, t_symbol *s, int argc, t_atom *argv){
+void fofi_tilde_list(t_fofi_tilde *x, t_symbol *s, int argc, t_atom *argv) {
 	if (argc != NUM_MIDINOTES)
 		pd_error(x, "Received Invalid note list");
 
-	for (int i = 0 ; i < NUM_MIDINOTES; i++){
+	for (int i = 0 ; i < NUM_MIDINOTES; i++)
 		x->notes[i]=argv[i];
-	}
-// TODO: IMPLEMENT
 }
 
-void fofi_tilde_dsp(t_fofi_tilde *x, t_signal **sp)
-{
-	dsp_add(fofi_tilde_perform, 4, x,
-					sp[0]->s_vec, sp[1]->s_vec, sp[0]->s_n);
+void fofi_tilde_dsp(t_fofi_tilde *x, t_signal **sp) {
+	dsp_add(fofi_tilde_perform, 4, x, sp[0]->s_vec, sp[1]->s_vec, sp[0]->s_n);
 }
 
-void fofi_tilde_free(t_fofi_tilde *x)
-{
-	/* free any ressources associated with the given inlet */
+void fofi_tilde_free(t_fofi_tilde *x) {
 	inlet_free(x->x_in2);
 	inlet_free(x->x_in3);
-
-	/* free any ressources associated with the given outlet */
 	outlet_free(x->x_out);
-
 }
 
-void *fofi_tilde_new(t_floatarg f)
-{
+void *fofi_tilde_new(t_floatarg f) {
 	t_fofi_tilde *x = (t_fofi_tilde *)pd_new(fofi_tilde_class);
 
 	x->x_in2 = floatinlet_new (&x->x_obj, &x->f_gain);
@@ -161,12 +139,9 @@ void *fofi_tilde_new(t_floatarg f)
 	x->x_out = outlet_new(&x->x_obj, &s_signal);
 
 
-	for (int i = 0; i < NUM_MIDINOTES ; i++){
-		x->last_values[i].last_in[0] = 0;
-		x->last_values[i].last_in[1] = 0;
-		x->last_values[i].last_out[0] = 0;
-		x->last_values[i].last_out[1] = 0;
-	}
+	/* for (int i = 0; i < NUM_MIDINOTES ; i++){ */
+	/*	x->last_values[i] = {{0,0} {0,0}}; */
+	/* } */
 
 	return (void *)x;
 }
