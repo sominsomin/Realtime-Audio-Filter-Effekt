@@ -14,6 +14,10 @@ typedef struct _polyphonizer {
 } t_polyphonizer;
 
 void polyphonizer_note(t_polyphonizer *x, t_floatarg f){
+	if ((int) f >= NUM_MIDINOTES || (int) f < 0){
+		pd_error(x, "Invalid note number: %d", (int) f);
+		return;
+	}
 	SETFLOAT(&x->notes[(int)f], x->current_vel);
 	outlet_list(x->x_out, &s_list, NUM_MIDINOTES,
 							(t_atom *)&x->notes);
