@@ -1,3 +1,6 @@
+//https://www.dummies.com/education/science/science-engineering/how-to-characterize-the-peaking-filter-for-an-audio-graphic-equalizer/
+
+
 // peaking Equalizer-Equation
 float peakingEq(float x0_, float fc_, float q_, float Gdb_)
 {
