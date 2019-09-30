@@ -1,8 +1,10 @@
 /**
+ * @file
+ * @author Simon Zoller, Benedikt Wieder
  * A very simple PD plugin which takes note messages (provided by a midi input
  * gen) and sets their velocity value (first inlet) in a list of fixed size (128
  * - one for each midi note) This list is then passed on as a list message -
- * whenever a midi message is received
+ * whenever a midi message is received.
  * We use a list of fixed size to avoid dynamic memory allocation and
  * avoid addiotional bound checks when receiving the list
  */

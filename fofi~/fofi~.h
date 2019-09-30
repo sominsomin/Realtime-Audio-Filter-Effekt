@@ -1,6 +1,6 @@
 /**
  * @file
- * @author Ben & Simon
+ * @author Simon Zoller, Benedikt Wieder
  * @brief Polyphonic filter applied to input using midi.
  *
  */

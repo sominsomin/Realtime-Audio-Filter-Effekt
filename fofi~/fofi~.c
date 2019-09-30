@@ -1,6 +1,6 @@
 /**
  * @file
- * @author Ben, Simon
+ * @author Simon Zoller, Benedikt Wieder
  * @brief Polyphonic filter applied to input using midi.
  * Fofi takes a list of midi notes (provided by the polyphonizer plugin) applies
  * a bandpass filter/peaking equalizer for the corresponding frequencies.
