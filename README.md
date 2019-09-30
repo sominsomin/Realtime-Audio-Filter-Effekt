@@ -11,8 +11,8 @@ in *"pd-lib-builder/Makefile.pdlibbuilder"*
 Compiles the plugin and runs PD with a test patch
 
 ### make debug_run
-Compiles the plugin with debuggin flags and runs PD within gdb. Also loads the symbol file for the plugin
-so that gdb properly autocompletes.
+Compiles the plugin with debuggin flags and runs PD within gdb (with realtime mode disabled).
+Also loads the symbol file for the plugin so that gdb properly autocompletes.
 
 ## Doxygen
 
