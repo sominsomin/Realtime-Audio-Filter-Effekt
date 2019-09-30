@@ -1,0 +1,200 @@
+\hypertarget{fofi~_8c}{}\section{fofi$\sim$.c File Reference}
+\label{fofi~_8c}\index{fofi$\sim$.c@{fofi$\sim$.c}}
+
+
+Polyphonic filter applied to input using midi. Fofi takes a list of midi notes (provided by the polyphonizer plugin) applies a bandpass filter/peaking equalizer for the corresponding frequencies. Gain and bandwidth can be set to adjust the output. !! Handle with care. This will heavily distort when playing notes close to each other. A compressor for safty is provided.  
+
+
+{\ttfamily \#include \char`\"{}fofi$\sim$.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}m\+\_\+pd.\+h\char`\"{}}\newline
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{fofi~_8c_ae6be347e31c48fcae5108f6db7a8bcfd}{F\+O\+F\+I\+\_\+\+T\+Y\+PE}} \{ \mbox{\hyperlink{fofi~_8c_ae6be347e31c48fcae5108f6db7a8bcfda4579b52acef1f8eda7cbb6a2337346b0}{P\+EQ}} = 0, 
+\mbox{\hyperlink{fofi~_8c_ae6be347e31c48fcae5108f6db7a8bcfdaf5a5119c2b95cc7f4f3e20f56576ee3e}{BP}} = 1
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+float \mbox{\hyperlink{fofi~_8c_aa9833aa2762cf257e25d13fb21b004b0}{peaking\+\_\+equalizer}} (float in, \mbox{\hyperlink{fofi~_8h_a728138bbe23514a1927f1f686090cd52}{t\+\_\+prev\+\_\+samples}} $\ast$prev, float f\+\_\+sample\+Rate, float f\+\_\+gain, float f\+\_\+center\+Frequency, float f\+\_\+peak\+Width)
+\begin{DoxyCompactList}\small\item\em Implementation of a peaking equalizer based on a second-\/order infinite impulse response (I\+IR) filter. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{fofi~_8c_a79bf4da8324cab6a31c4439c746821d8}{bandpass}} (float in, \mbox{\hyperlink{fofi~_8h_a728138bbe23514a1927f1f686090cd52}{t\+\_\+prev\+\_\+samples}} $\ast$prev, float f\+\_\+sample\+Rate, float f\+\_\+gain, float f\+\_\+center\+Frequency)
+\begin{DoxyCompactList}\small\item\em Implementation of a bandpass equalizer. \end{DoxyCompactList}\item 
+t\+\_\+int $\ast$ \mbox{\hyperlink{fofi~_8c_addff81b941469be60d263c2df0493f50}{fofi\+\_\+tilde\+\_\+perform}} (t\+\_\+int $\ast$w)
+\item 
+void \mbox{\hyperlink{fofi~_8c_a83449b8d535886ef9d7ecd42146932c3}{fofi\+\_\+tilde\+\_\+list}} (\mbox{\hyperlink{fofi~_8h_a9d4d0a864b5185ebc589d41112da08ce}{t\+\_\+fofi\+\_\+tilde}} $\ast$x, t\+\_\+symbol $\ast$s, int argc, t\+\_\+atom $\ast$argv)
+\begin{DoxyCompactList}\small\item\em method for list messages (Must be list with 128 integer \char`\"{}atom\char`\"{} values = Midi notes) \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{fofi~_8c_aff2a8eab6867563a3613be7a34908bb2}{fofi\+\_\+tilde\+\_\+dsp}} (\mbox{\hyperlink{fofi~_8h_a9d4d0a864b5185ebc589d41112da08ce}{t\+\_\+fofi\+\_\+tilde}} $\ast$x, t\+\_\+signal $\ast$$\ast$sp)
+\item 
+void \mbox{\hyperlink{fofi~_8c_a5e4884d6f16289cbd823f619ca55c44a}{fofi\+\_\+tilde\+\_\+free}} (\mbox{\hyperlink{fofi~_8h_a9d4d0a864b5185ebc589d41112da08ce}{t\+\_\+fofi\+\_\+tilde}} $\ast$x)
+\begin{DoxyCompactList}\small\item\em PD class \char`\"{}destructor\char`\"{}. \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{fofi~_8c_a523787a74d7b8f02c80d1e0cc0468699}{fofi\+\_\+tilde\+\_\+new}} (t\+\_\+floatarg f)
+\begin{DoxyCompactList}\small\item\em PD class \char`\"{}constructor\char`\"{}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{fofi~_8c_a7dd6882540d4beb229f7604500e7ef47}{fofi\+\_\+tilde\+\_\+setup}} (void)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+const float \mbox{\hyperlink{fofi~_8c_a3b64319dc2461e1ebcf429be2df27671}{M\+I\+D\+I\+\_\+\+F\+R\+E\+Q\+\_\+\+M\+AP}} \mbox{[}128\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Polyphonic filter applied to input using midi. Fofi takes a list of midi notes (provided by the polyphonizer plugin) applies a bandpass filter/peaking equalizer for the corresponding frequencies. Gain and bandwidth can be set to adjust the output. !! Handle with care. This will heavily distort when playing notes close to each other. A compressor for safty is provided. 
+
+\begin{DoxyAuthor}{Author}
+Ben, Simon 
+\end{DoxyAuthor}
+
+
+\subsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{fofi~_8c_ae6be347e31c48fcae5108f6db7a8bcfd}\label{fofi~_8c_ae6be347e31c48fcae5108f6db7a8bcfd}} 
+\index{fofi$\sim$.c@{fofi$\sim$.c}!FOFI\_TYPE@{FOFI\_TYPE}}
+\index{FOFI\_TYPE@{FOFI\_TYPE}!fofi$\sim$.c@{fofi$\sim$.c}}
+\subsubsection{\texorpdfstring{FOFI\_TYPE}{FOFI\_TYPE}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{fofi~_8c_ae6be347e31c48fcae5108f6db7a8bcfd}{F\+O\+F\+I\+\_\+\+T\+Y\+PE}}}
+
+Fofi Type parameter for perform function \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PEQ@{PEQ}!fofi$\sim$.c@{fofi$\sim$.c}}\index{fofi$\sim$.c@{fofi$\sim$.c}!PEQ@{PEQ}}}\mbox{\Hypertarget{fofi~_8c_ae6be347e31c48fcae5108f6db7a8bcfda4579b52acef1f8eda7cbb6a2337346b0}\label{fofi~_8c_ae6be347e31c48fcae5108f6db7a8bcfda4579b52acef1f8eda7cbb6a2337346b0}} 
+P\+EQ&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BP@{BP}!fofi$\sim$.c@{fofi$\sim$.c}}\index{fofi$\sim$.c@{fofi$\sim$.c}!BP@{BP}}}\mbox{\Hypertarget{fofi~_8c_ae6be347e31c48fcae5108f6db7a8bcfdaf5a5119c2b95cc7f4f3e20f56576ee3e}\label{fofi~_8c_ae6be347e31c48fcae5108f6db7a8bcfdaf5a5119c2b95cc7f4f3e20f56576ee3e}} 
+BP&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{fofi~_8c_a79bf4da8324cab6a31c4439c746821d8}\label{fofi~_8c_a79bf4da8324cab6a31c4439c746821d8}} 
+\index{fofi$\sim$.c@{fofi$\sim$.c}!bandpass@{bandpass}}
+\index{bandpass@{bandpass}!fofi$\sim$.c@{fofi$\sim$.c}}
+\subsubsection{\texorpdfstring{bandpass()}{bandpass()}}
+{\footnotesize\ttfamily float bandpass (\begin{DoxyParamCaption}\item[{float}]{in,  }\item[{\mbox{\hyperlink{fofi~_8h_a728138bbe23514a1927f1f686090cd52}{t\+\_\+prev\+\_\+samples}} $\ast$}]{prev,  }\item[{float}]{f\+\_\+sample\+Rate,  }\item[{float}]{f\+\_\+gain,  }\item[{float}]{f\+\_\+center\+Frequency }\end{DoxyParamCaption})}
+
+
+
+Implementation of a bandpass equalizer. 
+
+Based on a second-\/order infinite impulse response (I\+IR) filter. Implemented with constant skirt gain and peak gain = Q \begin{DoxySeeAlso}{See also}
+\href{https://www.w3.org/2011/audio/audio-eq-cookbook.html}{\texttt{ https\+://www.\+w3.\+org/2011/audio/audio-\/eq-\/cookbook.\+html}}
+\end{DoxySeeAlso}
+
+\begin{DoxyParams}{Parameters}
+{\em in} & The current sample to be processed \\
+\hline
+{\em prev} & Previous two input/output samples (see \mbox{\hyperlink{structprev__samples}{prev\+\_\+samples}}) \\
+\hline
+{\em f\+\_\+centerfrequency} & Center frequency for peak \\
+\hline
+{\em f\+\_\+gain} & Gain for center frequency (ensure $>$ 0) \\
+\hline
+{\em f\+\_\+sample\+Rate} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+processed output sample 
+\end{DoxyReturn}
+\mbox{\Hypertarget{fofi~_8c_aff2a8eab6867563a3613be7a34908bb2}\label{fofi~_8c_aff2a8eab6867563a3613be7a34908bb2}} 
+\index{fofi$\sim$.c@{fofi$\sim$.c}!fofi\_tilde\_dsp@{fofi\_tilde\_dsp}}
+\index{fofi\_tilde\_dsp@{fofi\_tilde\_dsp}!fofi$\sim$.c@{fofi$\sim$.c}}
+\subsubsection{\texorpdfstring{fofi\_tilde\_dsp()}{fofi\_tilde\_dsp()}}
+{\footnotesize\ttfamily void fofi\+\_\+tilde\+\_\+dsp (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{fofi~_8h_a9d4d0a864b5185ebc589d41112da08ce}{t\+\_\+fofi\+\_\+tilde}} $\ast$}]{x,  }\item[{t\+\_\+signal $\ast$$\ast$}]{sp }\end{DoxyParamCaption})}
+
+Registers perform-\/routine at the dsp-\/engine this function gets called whenever the D\+SP is turned ON the name of this function is registered in \mbox{\hyperlink{fofi~_8h_a7dd6882540d4beb229f7604500e7ef47}{fofi\+\_\+tilde\+\_\+setup()}} \mbox{\Hypertarget{fofi~_8c_a5e4884d6f16289cbd823f619ca55c44a}\label{fofi~_8c_a5e4884d6f16289cbd823f619ca55c44a}} 
+\index{fofi$\sim$.c@{fofi$\sim$.c}!fofi\_tilde\_free@{fofi\_tilde\_free}}
+\index{fofi\_tilde\_free@{fofi\_tilde\_free}!fofi$\sim$.c@{fofi$\sim$.c}}
+\subsubsection{\texorpdfstring{fofi\_tilde\_free()}{fofi\_tilde\_free()}}
+{\footnotesize\ttfamily void fofi\+\_\+tilde\+\_\+free (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{fofi~_8h_a9d4d0a864b5185ebc589d41112da08ce}{t\+\_\+fofi\+\_\+tilde}} $\ast$}]{x }\end{DoxyParamCaption})}
+
+
+
+PD class \char`\"{}destructor\char`\"{}. 
+
+frees dynamically allocated ressources \mbox{\Hypertarget{fofi~_8c_a83449b8d535886ef9d7ecd42146932c3}\label{fofi~_8c_a83449b8d535886ef9d7ecd42146932c3}} 
+\index{fofi$\sim$.c@{fofi$\sim$.c}!fofi\_tilde\_list@{fofi\_tilde\_list}}
+\index{fofi\_tilde\_list@{fofi\_tilde\_list}!fofi$\sim$.c@{fofi$\sim$.c}}
+\subsubsection{\texorpdfstring{fofi\_tilde\_list()}{fofi\_tilde\_list()}}
+{\footnotesize\ttfamily void fofi\+\_\+tilde\+\_\+list (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{fofi~_8h_a9d4d0a864b5185ebc589d41112da08ce}{t\+\_\+fofi\+\_\+tilde}} $\ast$}]{x,  }\item[{t\+\_\+symbol $\ast$}]{s,  }\item[{int}]{argc,  }\item[{t\+\_\+atom $\ast$}]{argv }\end{DoxyParamCaption})}
+
+
+
+method for list messages (Must be list with 128 integer \char`\"{}atom\char`\"{} values = Midi notes) 
+
+\mbox{\Hypertarget{fofi~_8c_a523787a74d7b8f02c80d1e0cc0468699}\label{fofi~_8c_a523787a74d7b8f02c80d1e0cc0468699}} 
+\index{fofi$\sim$.c@{fofi$\sim$.c}!fofi\_tilde\_new@{fofi\_tilde\_new}}
+\index{fofi\_tilde\_new@{fofi\_tilde\_new}!fofi$\sim$.c@{fofi$\sim$.c}}
+\subsubsection{\texorpdfstring{fofi\_tilde\_new()}{fofi\_tilde\_new()}}
+{\footnotesize\ttfamily void$\ast$ fofi\+\_\+tilde\+\_\+new (\begin{DoxyParamCaption}\item[{t\+\_\+floatarg}]{f }\end{DoxyParamCaption})}
+
+
+
+PD class \char`\"{}constructor\char`\"{}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em f} & selects F\+O\+F\+I\+\_\+\+T\+Y\+PE (0=P\+EQ, 1=BP) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{fofi~_8c_addff81b941469be60d263c2df0493f50}\label{fofi~_8c_addff81b941469be60d263c2df0493f50}} 
+\index{fofi$\sim$.c@{fofi$\sim$.c}!fofi\_tilde\_perform@{fofi\_tilde\_perform}}
+\index{fofi\_tilde\_perform@{fofi\_tilde\_perform}!fofi$\sim$.c@{fofi$\sim$.c}}
+\subsubsection{\texorpdfstring{fofi\_tilde\_perform()}{fofi\_tilde\_perform()}}
+{\footnotesize\ttfamily t\+\_\+int$\ast$ fofi\+\_\+tilde\+\_\+perform (\begin{DoxyParamCaption}\item[{t\+\_\+int $\ast$}]{w }\end{DoxyParamCaption})}
+
+Tthis perform-\/routine is called for each signal block the name of this function is arbitrary and is registered to Pd in the \mbox{\hyperlink{fofi~_8h_aff2a8eab6867563a3613be7a34908bb2}{fofi\+\_\+tilde\+\_\+dsp()}} function, each time the D\+SP is turned on
+
+the argument to this function is just a pointer within an array we have to know for ourselves how many elements inthis array are reserved for us (hint\+: we declare the number of used elements in the \mbox{\hyperlink{fofi~_8h_aff2a8eab6867563a3613be7a34908bb2}{fofi\+\_\+tilde\+\_\+dsp()}} at registration
+
+since all elements are of type \char`\"{}t\+\_\+int\char`\"{} we have to cast them to whatever we think is apropriate; \char`\"{}apropriate\char`\"{} is how we registered this function in \mbox{\hyperlink{fofi~_8h_aff2a8eab6867563a3613be7a34908bb2}{fofi\+\_\+tilde\+\_\+dsp()}} \mbox{\Hypertarget{fofi~_8c_a7dd6882540d4beb229f7604500e7ef47}\label{fofi~_8c_a7dd6882540d4beb229f7604500e7ef47}} 
+\index{fofi$\sim$.c@{fofi$\sim$.c}!fofi\_tilde\_setup@{fofi\_tilde\_setup}}
+\index{fofi\_tilde\_setup@{fofi\_tilde\_setup}!fofi$\sim$.c@{fofi$\sim$.c}}
+\subsubsection{\texorpdfstring{fofi\_tilde\_setup()}{fofi\_tilde\_setup()}}
+{\footnotesize\ttfamily void fofi\+\_\+tilde\+\_\+setup (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+Define the function-\/space of the class within a single-\/object external the name of this function is very special \mbox{\Hypertarget{fofi~_8c_aa9833aa2762cf257e25d13fb21b004b0}\label{fofi~_8c_aa9833aa2762cf257e25d13fb21b004b0}} 
+\index{fofi$\sim$.c@{fofi$\sim$.c}!peaking\_equalizer@{peaking\_equalizer}}
+\index{peaking\_equalizer@{peaking\_equalizer}!fofi$\sim$.c@{fofi$\sim$.c}}
+\subsubsection{\texorpdfstring{peaking\_equalizer()}{peaking\_equalizer()}}
+{\footnotesize\ttfamily float peaking\+\_\+equalizer (\begin{DoxyParamCaption}\item[{float}]{in,  }\item[{\mbox{\hyperlink{fofi~_8h_a728138bbe23514a1927f1f686090cd52}{t\+\_\+prev\+\_\+samples}} $\ast$}]{prev,  }\item[{float}]{f\+\_\+sample\+Rate,  }\item[{float}]{f\+\_\+gain,  }\item[{float}]{f\+\_\+center\+Frequency,  }\item[{float}]{f\+\_\+peak\+Width }\end{DoxyParamCaption})}
+
+
+
+Implementation of a peaking equalizer based on a second-\/order infinite impulse response (I\+IR) filter. 
+
+\begin{DoxySeeAlso}{See also}
+\href{https://www.dummies.com/education/science/science-engineering/how-to-characterize-the-peaking-filter-for-an-audio-graphic-equalizer/}{\texttt{ https\+://www.\+dummies.\+com/education/science/science-\/engineering/how-\/to-\/characterize-\/the-\/peaking-\/filter-\/for-\/an-\/audio-\/graphic-\/equalizer/}}
+\end{DoxySeeAlso}
+
+\begin{DoxyParams}{Parameters}
+{\em in} & The current sample to be processed \\
+\hline
+{\em prev} & Previous two input/output samples (see \mbox{\hyperlink{structprev__samples}{prev\+\_\+samples}}) \\
+\hline
+{\em f\+\_\+centerfrequency} & Center frequency for peak \\
+\hline
+{\em f\+\_\+gain} & Gain for center frequency (ensure $>$ 0) \\
+\hline
+{\em f\+\_\+peak\+Width} & Filter bandwidth (inversly proportional -\/ larger values imply a smaller bandwidth) (ensure $>$ 0) \\
+\hline
+{\em f\+\_\+sample\+Rate} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+processed output sample 
+\end{DoxyReturn}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{fofi~_8c_a3b64319dc2461e1ebcf429be2df27671}\label{fofi~_8c_a3b64319dc2461e1ebcf429be2df27671}} 
+\index{fofi$\sim$.c@{fofi$\sim$.c}!MIDI\_FREQ\_MAP@{MIDI\_FREQ\_MAP}}
+\index{MIDI\_FREQ\_MAP@{MIDI\_FREQ\_MAP}!fofi$\sim$.c@{fofi$\sim$.c}}
+\subsubsection{\texorpdfstring{MIDI\_FREQ\_MAP}{MIDI\_FREQ\_MAP}}
+{\footnotesize\ttfamily const float M\+I\+D\+I\+\_\+\+F\+R\+E\+Q\+\_\+\+M\+AP\mbox{[}128\mbox{]}}
+
+Maps midi note to frequency 

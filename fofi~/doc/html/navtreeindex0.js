@@ -1,0 +1,24 @@
+var NAVTREEINDEX0 =
+{
+"annotated.html":[0,0],
+"classes.html":[0,1],
+"functions.html":[0,2,0],
+"functions_vars.html":[0,2,1],
+"index.html":[],
+"pages.html":[],
+"struct__fofi__tilde.html":[0,0,0],
+"struct__fofi__tilde.html#a19888916f4cb842a3df03aaaacae812e":[0,0,0,5],
+"struct__fofi__tilde.html#a1f651402d2c0639cd164d6b3d984a5c1":[0,0,0,9],
+"struct__fofi__tilde.html#a1f826f040d78942f1cb95b2c903bd36d":[0,0,0,4],
+"struct__fofi__tilde.html#a20d97ab99b35909dcf2a51b292c39a33":[0,0,0,6],
+"struct__fofi__tilde.html#a243e1b723c18fb1bb57ecfbc1c5b84f6":[0,0,0,8],
+"struct__fofi__tilde.html#a5cdfe16a03a81e1ffb3bb60ab0e92eca":[0,0,0,10],
+"struct__fofi__tilde.html#a7434f573cf65bb5167a3ee26ee485abf":[0,0,0,3],
+"struct__fofi__tilde.html#a7ffaace888f4bfdfc36150731c79fb98":[0,0,0,2],
+"struct__fofi__tilde.html#a97f9021a0fee597ec4a100473f7aafd3":[0,0,0,7],
+"struct__fofi__tilde.html#ae59a31f6fe658e56a45e39ba4718cf47":[0,0,0,0],
+"struct__fofi__tilde.html#af4ec7786674213b45c30b547f0f2a2ba":[0,0,0,1],
+"structprev__samples.html":[0,0,1],
+"structprev__samples.html#a970fccb60b4bd4921159209f991a7820":[0,0,1,0],
+"structprev__samples.html#ababa7affbc9b721599054b932fd3b687":[0,0,1,1]
+};
