@@ -1,55 +1,62 @@
-#N canvas 572 83 1280 997 10;
-#X obj 139 328 dac~;
-#X floatatom 176 77 10 0.1 1 1 Gain(Default:0.1) - -, f 10;
-#X obj 177 57 hsl 64 20 0.004 0.4 1 0 empty empty empty -2 -8 0 10
--262144 -1 -1 5700 1;
-#X floatatom 176 123 10 1 10 1 PeakWidth(Default:14) - -, f 10;
-#X obj 177 102 hsl 64 20 0.2 20 1 0 empty empty empty -2 -8 0 10 -262144
--1 -1 5300 1;
-#X obj 10 141 polyphonizer;
-#X obj 42 111 notein;
-#X msg 10 126 note \$1;
-#X obj 83 72 readsf~;
-#X msg 119 50 start;
-#X msg 29 51 open loop.wav;
-#X obj 139 271 tb_compressor~;
-#X obj 231 270 tb_compressorUI;
-#X obj 36 262 vu 8 80 empty empty -1 -8 0 10 -66577 -1 1 0;
-#X obj 36 224 env~ 128;
-#X obj 35 242 - 100;
-#X obj 81 316 vu 8 80 empty empty -1 -8 0 10 -66577 -1 1 0;
-#X obj 81 285 env~ 128;
-#X obj 81 299 - 100;
-#X text 189 420 Compressor from: http://designingsound.org/2013/06/28/tutorial-a-compressor-in-pure-data/
-;
-#X text 23 92 Midi Input;
-#X text 81 23 Load Sample;
-#X text 185 37 Careful!;
-#X text 170 139 (inversly proportional!);
-#X text 6 7 Play midi notes while playing sample loop to trigger the
-filter/eq;
-#X obj 121 151 fofi~ 0;
-#X text 160 166 0=PeakingEQ/1=BP Note: After changing argument you
-need to set Gain/Peakwidth args!;
-#X connect 1 0 25 1;
+#N canvas 600 83 1269 997 10;
+#X obj 96 397 dac~;
+#X floatatom 117 210 10 0.1 1 1 Gain - -;
+#X obj 120 190 hsl 64 20 0.004 0.4 1 0 empty empty empty -2 -8 0 10
+-262144 -1 -1 9500 1;
+#X floatatom 219 259 10 1 10 1 PeakWidth - -;
+#X obj 223 239 hsl 64 20 0.2 20 1 0 empty empty empty -2 -8 0 10 -262144
+-1 -1 8400 1;
+#X obj 57 163 polyphonizer;
+#X obj 255 185 readsf~;
+#X msg 260 165 start;
+#X msg 253 146 open loop.wav;
+#X obj 18 330 vu 8 80 empty empty -1 -8 0 10 -66577 -1 1 0;
+#X obj 18 292 env~ 128;
+#X obj 17 310 - 100;
+#X text 215 274 (inversly proportional!);
+#X msg 7 107 note 65;
+#X obj 223 26 bng 40 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X text 122 302 0=PeakingEQ/1=BP Note: After changing the argument
+you need to reset Gain/Peakwidth args!;
+#X msg 57 107 note 30;
+#X obj 8 50 bng 30 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 67 46 bng 30 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 120 39 bng 30 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+-1;
+#X obj 112 272 fofi~ 0;
+#X text 5 21 Noten hier einschalten;
+#X text 266 48 Alle Noten ausschalten;
+#X msg 108 107 note 70;
+#X msg 223 92 0, f 1;
+#X msg 184 91 127;
+#X connect 1 0 20 1;
 #X connect 2 0 1 0;
-#X connect 3 0 25 2;
+#X connect 3 0 20 2;
 #X connect 4 0 3 0;
-#X connect 5 0 25 0;
-#X connect 6 0 7 0;
-#X connect 6 1 5 1;
-#X connect 7 0 5 0;
-#X connect 8 0 25 0;
-#X connect 9 0 8 0;
-#X connect 10 0 8 0;
-#X connect 11 0 0 0;
-#X connect 11 0 0 1;
-#X connect 11 0 17 0;
-#X connect 11 1 12 0;
-#X connect 12 0 11 1;
-#X connect 14 0 15 0;
-#X connect 15 0 13 0;
-#X connect 17 0 18 0;
+#X connect 5 0 20 0;
+#X connect 6 0 20 0;
+#X connect 7 0 6 0;
+#X connect 8 0 6 0;
+#X connect 10 0 11 0;
+#X connect 11 0 9 0;
+#X connect 13 0 5 0;
+#X connect 14 0 24 0;
+#X connect 14 0 13 0;
+#X connect 14 0 16 0;
+#X connect 14 0 23 0;
+#X connect 16 0 5 0;
+#X connect 17 0 25 0;
+#X connect 17 0 13 0;
+#X connect 18 0 25 0;
 #X connect 18 0 16 0;
-#X connect 25 0 11 0;
-#X connect 25 0 14 0;
+#X connect 19 0 25 0;
+#X connect 19 0 23 0;
+#X connect 20 0 10 0;
+#X connect 20 0 0 0;
+#X connect 20 0 0 1;
+#X connect 23 0 5 0;
+#X connect 24 0 5 1;
+#X connect 25 0 5 1;
